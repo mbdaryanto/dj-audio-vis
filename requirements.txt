@@ -1,0 +1,10 @@
+django
+djangorestframework
+markdown
+django-filter
+cryptography
+python-decouple
+django-cors-headers
+matplotlib
+numpy
+scipy

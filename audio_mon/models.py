@@ -2,21 +2,21 @@ from django.db import models
 
 
 class Machine(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Action(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Severity(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     color = models.CharField(max_length=50)
 
     def __str__(self):
@@ -32,6 +32,7 @@ class Anomaly(models.Model):
     timestamp = models.DateTimeField()
     machine = models.ForeignKey(Machine, on_delete=models.RESTRICT)
     severity = models.ForeignKey(Severity, on_delete=models.RESTRICT)
+    is_new = models.BooleanField(default=True)
     sensor = models.CharField(max_length=100)
     sound_clip = models.CharField(max_length=100)
     suspected_reason = models.ForeignKey(Reason, null=True, on_delete=models.RESTRICT)

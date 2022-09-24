@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alert Monitor</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+  </head>
+  <body>
+    <div id="root"></div>
+    {% if dev_server_url %}
+      <script src="{{ dev_server_url }}"></script>
+    {% else %}
+      <script src="{% static 'dist/main.js' %}"></script>
+    {% endif %}
+  </body>
+</html>

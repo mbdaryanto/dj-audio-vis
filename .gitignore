@@ -1,4 +1,6 @@
 audio_mon/static/audio/
+audio_mon/static/dist/
+node_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

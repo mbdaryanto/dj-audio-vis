@@ -12,12 +12,12 @@ def insert_initial_values(apps, schema_editor):
     Action = apps.get_model('audio_mon', 'Action')
     Action.objects.create(name='Immediate')
     Action.objects.create(name='Later')
-    Action.objects.create(name='No Action')    
-    
+    Action.objects.create(name='No Action')
+
     Severity = apps.get_model('audio_mon', 'Severity')
-    mild = Severity.objects.create(name='Mild', color='green')
-    moderate = Severity.objects.create(name='Moderate', color='amber')
-    severe = Severity.objects.create(name='Severe', color='red')
+    mild = Severity.objects.create(name='Mild', color='#11a034')
+    moderate = Severity.objects.create(name='Moderate', color='#FCA034')
+    severe = Severity.objects.create(name='Severe', color='#A02d11')
 
     Reason = apps.get_model('audio_mon', 'Reason')
     Reason.objects.create(machine=cnc, reason='Spindle Error')
@@ -28,7 +28,7 @@ def insert_initial_values(apps, schema_editor):
     Reason.objects.create(machine=milling, reason='Normal')
 
     Anomaly = apps.get_model('audio_mon', 'Anomaly')
-    anomalies_values = [ 
+    anomalies_values = [
         [1628676001, cnc, mild, '1234567890', '1.wav'],
         [1629102961, cnc, moderate, '0123456789', '2.wav '],
         [1629058322, cnc, severe, '1234567890', '3.wav'],

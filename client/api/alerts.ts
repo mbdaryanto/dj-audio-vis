@@ -1,6 +1,7 @@
 import type { AxiosInstance } from 'axios'
 import axios from 'axios'
 import { atom, selector } from 'recoil'
+import { object, string, number, Asserts } from 'yup'
 import type { PagedResponse } from './common'
 
 export interface MachineType {
@@ -80,3 +81,42 @@ export const recoilAnomalies = selector<AnomalyType[]>({
     return response.results
   }
 })
+
+export const reasonSchema = object({
+  id: number().integer().required(),
+  reason: string().required(),
+})
+
+export const actionSchema = object({
+  id: number().integer().required(),
+  name: string().required(),
+})
+
+export const anomalyUpdateSchema = object({
+  suspected_reason: reasonSchema.nullable().optional(),
+  action_required: actionSchema.nullable().optional(),
+  comments: string(),
+})
+
+export async function patchAnomaly(
+  axios: AxiosInstance,
+  id: number,
+  anomaly: Asserts<typeof anomalyUpdateSchema>
+) {
+  const response = await axios.patch(`/anomaly/${id}/`, {
+    body: anomaly
+  })
+  console.log(response.data)
+  return response.data
+}
+
+export async function markedAnomalyIsNotNew(
+  axios: AxiosInstance,
+  id: number,
+) {
+  const response = await axios.patch(`/anomaly/${id}/`, {
+    body: { 'is_new': false }
+  })
+  console.log(response.data)
+  return response.data
+}

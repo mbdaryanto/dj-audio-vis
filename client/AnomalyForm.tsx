@@ -1,33 +1,40 @@
-import { AnomalyType } from "./api/alerts";
-import { object, string, number } from 'yup'
-import { Form, Formik } from "formik";
-import { Button, FormControl, FormLabel, Select, Text, Textarea, VStack } from "@chakra-ui/react";
+import { Field, Form, Formik } from "formik";
+import { Button, FormControl, FormLabel, Select, Text, Textarea, useToast, VStack } from "@chakra-ui/react";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
+import type { AxiosError } from "axios"
+import { AnomalyType, anomalyUpdateSchema, patchAnomaly, recoilAnomalies, recoilAxios } from "./api/alerts";
+import axios from "axios";
 
-const reasonSchema = object({
-  id: number().integer().required(),
-  reason: string().required(),
-})
-
-const actionSchema = object({
-  id: number().integer().required(),
-  name: string().required(),
-})
-
-const anomalyUpdateSchema = object({
-  suspected_reason: reasonSchema.nullable().optional(),
-  action_required: actionSchema.nullable().optional(),
-  comments: string(),
-})
 
 function AnomalyForm({ initialValues }: {
   initialValues: AnomalyType
 }) {
+  const toast = useToast()
+  const axios = useRecoilValue(recoilAxios)
+  const refreshAnomalies = useRecoilRefresher_UNSTABLE(recoilAnomalies)
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={anomalyUpdateSchema}
-      onSubmit={async () => {
-
+      onSubmit={async (values) => {
+        try {
+          const validated = await anomalyUpdateSchema.validate(values)
+          const response = await patchAnomaly(axios, initialValues.id, validated)
+          toast({
+            status: "success",
+            title: "update successful",
+          })
+          refreshAnomalies()
+        } catch (err) {
+          const axiosError = err as AxiosError
+          if (axiosError.isAxiosError) {
+            toast({
+              status: "error",
+              title: "update failed",
+              description: axiosError.response?.data?.detail,
+            })
+          }
+        }
       }}
     >
       {({ isSubmitting }) => (
@@ -52,11 +59,14 @@ function AnomalyForm({ initialValues }: {
               </Select>
             </FormControl>
 
-            <FormControl>
-              <FormLabel>Suspected Reason</FormLabel>
-              <Textarea
-              />
-            </FormControl>
+            <Field name="comments">
+              {({ field }) => (
+              <FormControl>
+                <FormLabel>Comments</FormLabel>
+                <Textarea {...field}/>
+              </FormControl>
+              )}
+            </Field>
 
             <Button type="submit" colorScheme="blue">UPDATE</Button>
           </VStack>

@@ -38,3 +38,5 @@ class Anomaly(models.Model):
     suspected_reason = models.ForeignKey(Reason, null=True, on_delete=models.RESTRICT)
     action_required = models.ForeignKey(Action, null=True, on_delete=models.RESTRICT)
     comments = models.TextField()
+    sound_file = models.FileField(upload_to='audio', null=True)
+    plot_image = models.FileField(upload_to='plots', null=True)

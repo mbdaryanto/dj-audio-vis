@@ -2,8 +2,7 @@ import { Field, Form, Formik } from "formik";
 import { Button, FormControl, FormLabel, Select, Text, Textarea, useToast, VStack } from "@chakra-ui/react";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import type { AxiosError } from "axios"
-import { AnomalyType, anomalyUpdateSchema, patchAnomaly, recoilAnomalies, recoilAxios } from "./api/alerts";
-import axios from "axios";
+import { AnomalyType, anomalyUpdateSchema, updateAnomaly, recoilActions, recoilAnomalies, recoilAxios, recoilMachines, recoilReasons } from "./api/alerts";
 
 
 function AnomalyForm({ initialValues }: {
@@ -12,19 +11,26 @@ function AnomalyForm({ initialValues }: {
   const toast = useToast()
   const axios = useRecoilValue(recoilAxios)
   const refreshAnomalies = useRecoilRefresher_UNSTABLE(recoilAnomalies)
+  const availableActions = useRecoilValue(recoilActions)
+  const availableReasons = useRecoilValue(recoilReasons)
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={anomalyUpdateSchema}
-      onSubmit={async (values) => {
+      onSubmit={async (values, { resetForm }) => {
         try {
-          const validated = await anomalyUpdateSchema.validate(values)
-          const response = await patchAnomaly(axios, initialValues.id, validated)
+          const validated = await anomalyUpdateSchema.validate({
+            ...values,
+            is_new: false,
+          })
+          const response = await updateAnomaly(axios, initialValues.id, validated)
           toast({
             status: "success",
             title: "update successful",
           })
           refreshAnomalies()
+          resetForm()
         } catch (err) {
           const axiosError = err as AxiosError
           if (axiosError.isAxiosError) {
@@ -37,7 +43,7 @@ function AnomalyForm({ initialValues }: {
         }
       }}
     >
-      {({ isSubmitting }) => (
+      {({ values, isSubmitting, setFieldValue }) => (
         <Form>
           <VStack spacing={4} align="left">
             <FormControl>
@@ -47,15 +53,51 @@ function AnomalyForm({ initialValues }: {
 
             <FormControl>
               <FormLabel>Suspected Reason</FormLabel>
-              <Select>
+              <Select
+                value={values.suspected_reason?.id}
+                onChange={(ev) => {
+                  if (ev.target.value === null || ev.target.value === undefined) {
+                    setFieldValue('suspected_reason', null)
+                    return
+                  }
+                  try {
+                    const newId = parseInt(ev.target.value)
+                    const newReason = availableReasons.find(value => value.id === newId)
+                    setFieldValue('suspected_reason', newReason)
+                  } catch (err) {
+                    setFieldValue('suspected_reason', null)
+                  }
+                }}
+              >
                 <option>Unknown Anomaly</option>
+                {availableReasons.map(({ id, reason }) => (
+                  <option key={id} value={id}>{reason}</option>
+                ))}
               </Select>
             </FormControl>
 
             <FormControl>
               <FormLabel>Action Required</FormLabel>
-              <Select>
+              <Select
+                value={values.action_required?.id}
+                onChange={(ev) => {
+                  if (ev.target.value === null || ev.target.value === undefined) {
+                    setFieldValue('action_required', null)
+                    return
+                  }
+                  try {
+                    const newId = parseInt(ev.target.value)
+                    const newAction = availableActions.find(value => value.id === newId)
+                    setFieldValue('action_required', newAction)
+                  } catch (err) {
+                    setFieldValue('action_required', null)
+                  }
+                }}
+              >
                 <option>Select Action</option>
+                {availableActions.map(({ id, name }) => (
+                  <option key={id} value={id}>{name}</option>
+                ))}
               </Select>
             </FormControl>
 
@@ -68,7 +110,7 @@ function AnomalyForm({ initialValues }: {
               )}
             </Field>
 
-            <Button type="submit" colorScheme="blue">UPDATE</Button>
+            <Button type="submit" colorScheme="blue" isLoading={isSubmitting}>UPDATE</Button>
           </VStack>
         </Form>
       )}

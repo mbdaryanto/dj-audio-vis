@@ -24,6 +24,7 @@ function AlertsPage() {
   useEffect(() => {
     if (selectedMachine === null && Array.isArray(machines) && machines.length > 0) {
       setSelectedMachine(machines[0])
+      setSelectedAnomaly(undefined)
     }
   }, [machines, selectedMachine])
 
@@ -146,16 +147,16 @@ function AlertsPage() {
               <HStack>
                 <AudioTrackVis
                   title="Anomaly Machine Output"
-                  audioUrl={`/static/audio/${selectedAnomaly.sound_clip}`}
-                  imageUrl={`/anomaly/${selectedAnomaly.id}/waveform/`}
+                  audioUrl={selectedAnomaly.sound_file}
+                  imageUrl={selectedAnomaly.plot_image ?? `/anomaly/${selectedAnomaly.id}/waveform/`}
                 />
                 <AudioTrackVis
                   title="Normal Machine Output"
-                  audioUrl={`/static/audio/${selectedAnomaly.sound_clip}`}
-                  imageUrl={`/anomaly/${selectedAnomaly.id}/waveform/`}
+                  audioUrl={selectedAnomaly.sound_file}
+                  imageUrl={selectedAnomaly.plot_image ?? `/anomaly/${selectedAnomaly.id}/waveform/`}
                 />
               </HStack>
-              <AnomalyForm initialValues={selectedAnomaly}/>
+              <AnomalyForm key={selectedAnomaly.id} initialValues={selectedAnomaly}/>
             </VStack>
           )}
         </Box>

@@ -37,10 +37,12 @@ export interface AnomalyType {
   severity: SeverityType
   is_new: boolean
   sensor: string
-  sound_clip: string
-  suspected_reason?: ReasonType
-  action_required?: ActionType
+  // sound_clip: string
+  suspected_reason?: ReasonType | null
+  action_required?: ActionType | null
   comments?: string
+  sound_file?: string | null
+  plot_image?: string
 }
 
 export async function getAnomalyList(axios: AxiosInstance, machine: number | string): Promise<PagedResponse<AnomalyType[]>> {
@@ -49,6 +51,25 @@ export async function getAnomalyList(axios: AxiosInstance, machine: number | str
       machine: machine.toString()
     }
   })
+  return response.data
+}
+
+export async function getReasonList(axios: AxiosInstance, machine: number | string): Promise<PagedResponse<ReasonType[]>> {
+  const response = await axios.get<PagedResponse<ReasonType[]>>('/reasons/', {
+    params: {
+      machine: machine.toString()
+    }
+  })
+  return response.data
+}
+
+export async function getActionList(axios: AxiosInstance): Promise<PagedResponse<ActionType[]>> {
+  const response = await axios.get<PagedResponse<ActionType[]>>('/actions/')
+  return response.data
+}
+
+export async function getSeverityList(axios: AxiosInstance): Promise<PagedResponse<SeverityType[]>> {
+  const response = await axios.get<PagedResponse<SeverityType[]>>('/severity/')
   return response.data
 }
 
@@ -82,6 +103,26 @@ export const recoilAnomalies = selector<AnomalyType[]>({
   }
 })
 
+export const recoilActions = selector<ActionType[]>({
+  key: 'recoilActions',
+  get: async ({ get }) => {
+    const axios = get(recoilAxios)
+    const response = await getActionList(axios)
+    return response.results
+  }
+})
+
+export const recoilReasons = selector<ReasonType[]>({
+  key: 'recoilReasons',
+  get: async ({ get }) => {
+    const axios = get(recoilAxios)
+    const selectedMachine = get(recoilSelectedMachine)
+    if (selectedMachine === null) return []
+    const response = await getReasonList(axios, selectedMachine.id)
+    return response.results
+  }
+})
+
 export const reasonSchema = object({
   id: number().integer().required(),
   reason: string().required(),
@@ -95,17 +136,15 @@ export const actionSchema = object({
 export const anomalyUpdateSchema = object({
   suspected_reason: reasonSchema.nullable().optional(),
   action_required: actionSchema.nullable().optional(),
-  comments: string(),
+  comments: string().ensure(),
 })
 
-export async function patchAnomaly(
+export async function updateAnomaly(
   axios: AxiosInstance,
   id: number,
   anomaly: Asserts<typeof anomalyUpdateSchema>
 ) {
-  const response = await axios.patch(`/anomaly/${id}/`, {
-    body: anomaly
-  })
+  const response = await axios.put(`/anomaly/${id}/`, anomaly)
   console.log(response.data)
   return response.data
 }
@@ -114,9 +153,7 @@ export async function markedAnomalyIsNotNew(
   axios: AxiosInstance,
   id: number,
 ) {
-  const response = await axios.patch(`/anomaly/${id}/`, {
-    body: { 'is_new': false }
-  })
+  const response = await axios.patch(`/anomaly/${id}/`, { 'is_new': false })
   console.log(response.data)
   return response.data
 }

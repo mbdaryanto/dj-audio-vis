@@ -30,10 +30,10 @@ def insert_initial_values(apps, schema_editor):
     Anomaly = apps.get_model('audio_mon', 'Anomaly')
     anomalies_values = [
         [1628676001, cnc, mild, '1234567890', '1.wav'],
-        [1629102961, cnc, moderate, '0123456789', '2.wav '],
+        [1629102961, cnc, moderate, '0123456789', '2.wav'],
         [1629058322, cnc, severe, '1234567890', '3.wav'],
         [1629057722, milling, mild, '1122334455', '4.wav'],
-        [1629025202, milling, moderate, '2345678900', '5.wav '],
+        [1629025202, milling, moderate, '2345678900', '5.wav'],
         [1629057361, milling, severe, '2345678900', '6.wav'],
     ]
 

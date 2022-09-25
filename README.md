@@ -21,6 +21,10 @@ setting up database Connection, you will be prompted to enter host, port, user, 
 
     python make_env.python
 
+run migration to build database
+
+    python manage.py migrate
+
 run the server
 
     python manage.py runserver

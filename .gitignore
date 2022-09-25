@@ -1,5 +1,6 @@
 audio_mon/static/audio/
 audio_mon/static/dist/
+media/
 node_modules/
 
 # Byte-compiled / optimized / DLL files

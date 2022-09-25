@@ -52,7 +52,7 @@ class ObjectWithIdSerializer(serializers.Serializer):
 class AnomalyUpdateSerializer(serializers.ModelSerializer):
     suspected_reason = ObjectWithIdSerializer(required=False, allow_null=True)
     action_required = ObjectWithIdSerializer(required=False, allow_null=True)
-    comments = serializers.CharField(required=False, style={'base_template': 'textarea.html'})
+    comments = serializers.CharField(required=False, allow_blank=True, style={'base_template': 'textarea.html'})
 
     def update(self, instance, validated_data):
         print('updating instance...')

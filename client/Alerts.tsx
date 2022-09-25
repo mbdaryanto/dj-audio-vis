@@ -144,7 +144,7 @@ function AlertsPage() {
               <Heading fontSize="30px" fontWeight="light">Alert ID #{formatId(selectedAnomaly.id)}</Heading>
               <Text>Detected at {formatDateTime(selectedAnomaly.timestamp)}</Text>
               <Box bgColor="#72757A" w="100%" h="1px" mt="20px" mb="20px"></Box>
-              <Grid templateColumns="1fr 1fr">
+              <Grid templateColumns="1fr 1fr" gap="8px">
                 <GridItem>
                   <AudioTrackVis
                     title="Anomaly Machine Output"

@@ -36,11 +36,16 @@ def waveform(
     if request.method == "GET":
         # return HttpResponse("Hello World {}".format(id))
         anomaly: Anomaly = get_object_or_404(Anomaly, pk=pk)
+
+        if not bool(anomaly.sound_file):
+            raise Http404('sound file not available')
+
         # audio_file = AUDIO_BASE_DIR / anomaly.sound_clip
         if bool(anomaly.plot_image):
             return FileResponse(
                 anomaly.plot_image.open('rb'),
             )
+
         sound_file_path = Path(anomaly.sound_file.path)
         anomaly.plot_image.name = 'plots/{}.png'.format(sound_file_path.stem)
         wave_to_plot(Path(anomaly.sound_file.path), format='png', as_file=anomaly.plot_image.path)

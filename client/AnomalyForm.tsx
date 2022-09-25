@@ -54,6 +54,7 @@ function AnomalyForm({ initialValues }: {
             <FormControl>
               <FormLabel>Suspected Reason</FormLabel>
               <Select
+                maxW="270px"
                 value={values.suspected_reason?.id}
                 onChange={(ev) => {
                   if (ev.target.value === null || ev.target.value === undefined) {
@@ -79,6 +80,7 @@ function AnomalyForm({ initialValues }: {
             <FormControl>
               <FormLabel>Action Required</FormLabel>
               <Select
+                maxW="270px"
                 value={values.action_required?.id}
                 onChange={(ev) => {
                   if (ev.target.value === null || ev.target.value === undefined) {
@@ -110,7 +112,7 @@ function AnomalyForm({ initialValues }: {
               )}
             </Field>
 
-            <Button type="submit" colorScheme="blue" isLoading={isSubmitting}>UPDATE</Button>
+            <Button type="submit" colorScheme="blue" isLoading={isSubmitting} maxW="270px">UPDATE</Button>
           </VStack>
         </Form>
       )}

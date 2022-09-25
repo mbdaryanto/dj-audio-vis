@@ -1,4 +1,4 @@
-import { Box, Center, Heading, HStack, Image, LinkBox, LinkOverlay, Select, Text, VStack } from "@chakra-ui/react"
+import { Box, Center, Grid, GridItem, Heading, HStack, Image, LinkBox, LinkOverlay, Select, Text, VStack } from "@chakra-ui/react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { recoilAnomalies, recoilMachines, recoilSelectedMachine, AnomalyType } from "./api/alerts"
 import { FaCaretLeft as BackIcon } from 'react-icons/fa'
@@ -144,18 +144,22 @@ function AlertsPage() {
               <Heading fontSize="30px" fontWeight="light">Alert ID #{formatId(selectedAnomaly.id)}</Heading>
               <Text>Detected at {formatDateTime(selectedAnomaly.timestamp)}</Text>
               <Box bgColor="#72757A" w="100%" h="1px" mt="20px" mb="20px"></Box>
-              <HStack>
-                <AudioTrackVis
-                  title="Anomaly Machine Output"
-                  audioUrl={selectedAnomaly.sound_file}
-                  imageUrl={selectedAnomaly.plot_image ?? `/anomaly/${selectedAnomaly.id}/waveform/`}
-                />
-                <AudioTrackVis
-                  title="Normal Machine Output"
-                  audioUrl={selectedAnomaly.sound_file}
-                  imageUrl={selectedAnomaly.plot_image ?? `/anomaly/${selectedAnomaly.id}/waveform/`}
-                />
-              </HStack>
+              <Grid templateColumns="1fr 1fr">
+                <GridItem>
+                  <AudioTrackVis
+                    title="Anomaly Machine Output"
+                    audioUrl={selectedAnomaly.sound_file}
+                    imageUrl={selectedAnomaly.plot_image ?? `/anomaly/${selectedAnomaly.id}/waveform/`}
+                  />
+                </GridItem>
+                <GridItem>
+                  <AudioTrackVis
+                    title="Normal Machine Output"
+                    audioUrl={selectedAnomaly.sound_file}
+                    imageUrl={selectedAnomaly.plot_image ?? `/anomaly/${selectedAnomaly.id}/waveform/`}
+                  />
+                </GridItem>
+              </Grid>
               <AnomalyForm key={selectedAnomaly.id} initialValues={selectedAnomaly}/>
             </VStack>
           )}

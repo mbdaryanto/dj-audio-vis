@@ -21,13 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-d#6*o!39b20r)ub6&n*d9!*q8f&o%j9s7z)qibe0(upd9)e#7='
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'http://embede.duckdns.org',
+]
 
 
 # Application definition
@@ -146,7 +147,6 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'http://embede.duckdns.org:3001',
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'

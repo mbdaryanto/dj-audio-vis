@@ -27,7 +27,8 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'http://embede.duckdns.org',
+    'embede.duckdns.org',
+    '0.0.0.0',
 ]
 
 

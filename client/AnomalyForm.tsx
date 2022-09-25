@@ -5,8 +5,9 @@ import type { AxiosError } from "axios"
 import { AnomalyType, anomalyUpdateSchema, updateAnomaly, recoilActions, recoilAnomalies, recoilAxios, recoilMachines, recoilReasons } from "./api/alerts";
 
 
-function AnomalyForm({ initialValues }: {
+function AnomalyForm({ initialValues, onSave }: {
   initialValues: AnomalyType
+  onSave?: (values: Partial<AnomalyType>) => void
 }) {
   const toast = useToast()
   const axios = useRecoilValue(recoilAxios)
@@ -29,8 +30,9 @@ function AnomalyForm({ initialValues }: {
             status: "success",
             title: "update successful",
           })
+          onSave(response)
           refreshAnomalies()
-          resetForm()
+          resetForm({ values: {...initialValues, ...response}})
         } catch (err) {
           const axiosError = err as AxiosError
           if (axiosError.isAxiosError) {

@@ -143,8 +143,8 @@ export async function updateAnomaly(
   axios: AxiosInstance,
   id: number,
   anomaly: Asserts<typeof anomalyUpdateSchema>
-) {
-  const response = await axios.put(`/anomaly/${id}/`, anomaly)
+): Promise<Partial<AnomalyType>> {
+  const response = await axios.put<Partial<AnomalyType>>(`/anomaly/${id}/`, anomaly)
   console.log(response.data)
   return response.data
 }

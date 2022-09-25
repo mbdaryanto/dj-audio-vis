@@ -4,7 +4,7 @@ from io import BytesIO
 from pathlib import Path
 from django.shortcuts import render, get_object_or_404
 from django.http.request import HttpRequest
-from django.http import HttpResponse, Http404, FileResponse
+from django.http import Http404, FileResponse
 from django.conf import settings
 from rest_framework import generics, permissions, filters
 from rest_framework.response import Response

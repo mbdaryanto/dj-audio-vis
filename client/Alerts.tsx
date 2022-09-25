@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from "recoil"
 import { recoilAnomalies, recoilMachines, recoilSelectedMachine, AnomalyType } from "./api/alerts"
 import { FaCaretLeft as BackIcon } from 'react-icons/fa'
 import { useEffect, useState } from "react"
-import { format, parseISO } from "date-fns"
+import { format, parseISO, previousDay } from "date-fns"
 import AnomalyForm from "./AnomalyForm"
 
 
@@ -93,11 +93,11 @@ function AlertsPage() {
                     <Box pos="relative">
                       <LinkOverlay
                         href="#"
-                        onClick={(ev) => {
-                          console.log('clicked on the overlay')
-                          ev.preventDefault()
-                          ev.stopPropagation()
-                        }}
+                        // onClick={(ev) => {
+                        //   console.log('clicked on the overlay')
+                        //   ev.preventDefault()
+                        //   ev.stopPropagation()
+                        // }}
                       >
                         ID #{formatId(value.id)}
                       </LinkOverlay>
@@ -160,7 +160,11 @@ function AlertsPage() {
                   />
                 </GridItem>
               </Grid>
-              <AnomalyForm key={selectedAnomaly.id} initialValues={selectedAnomaly}/>
+              <AnomalyForm
+                key={selectedAnomaly.id}
+                initialValues={selectedAnomaly}
+                onSave={(savedData) => setSelectedAnomaly((prev) => ({...prev, ...savedData}))}
+              />
             </VStack>
           )}
         </Box>

@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 import wave
 from io import BytesIO
 from pathlib import Path
@@ -92,25 +93,27 @@ class AnomalyDetailPlot(generics.RetrieveAPIView):
         return Response({ 'plot': wave_to_plot(audio_file) })
 
 
-def wave_to_plot(wave_file: Path, format: str = 'png', as_file: str = None) -> bytes:
+def wave_to_plot(wave_file: Path, format: str = 'png', as_file: str = None) -> Optional[bytes]:
     with wave_file.open('rb') as fin:
         signal_wave = wave.open(fin)
-        # sample_rate = 16384
-        framerate = signal_wave.getframerate()
-        nframes = signal_wave.getnframes()
-        signal_wave.getnchannels()
+        params = signal_wave.getparams()
 
-        sig = np.frombuffer(signal_wave.readframes(nframes), dtype=np.int16)
+        sig = np.frombuffer(signal_wave.readframes(params.nframes), dtype=np.int16)
+        # take only 1st channel
+        sig = sig[0::params.nchannels]
 
     abs_max = np.max(np.abs(sig))
     normalized = sig / abs_max
 
-    f, t, Sxx = signal.spectrogram(sig) # , fs=framerate
+    f, t, Sxx = signal.spectrogram(sig, fs=params.framerate)
     freq_slice = np.where((f <= 8162))
 
     # keep only frequencies of interest
     f = f[freq_slice]
     Sxx = Sxx[freq_slice,:][0]
+
+    mean = np.mean(Sxx)
+    std = np.std(Sxx)
 
     plt.switch_backend('AGG')
     plt.figure(1, figsize=(4, 6), dpi=100)
@@ -122,7 +125,7 @@ def wave_to_plot(wave_file: Path, format: str = 'png', as_file: str = None) -> b
 
     plot_b = plt.subplot(3, 1, (2, 3))
     # plot_b.specgram(normalized, NFFT=1024, Fs=framerate, noverlap=900)
-    plot_b.pcolormesh(t, f, Sxx)
+    plot_b.pcolormesh(t, f, Sxx, vmin=0, vmax=2 * std + mean)
     plot_b.set_xlabel('Time')
     plot_b.set_ylabel('Frequency')
 

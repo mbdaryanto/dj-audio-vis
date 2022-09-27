@@ -49,7 +49,7 @@ def waveform(
 
         sound_file_path = Path(anomaly.sound_file.path)
         anomaly.plot_image.name = 'plots/{}.png'.format(sound_file_path.stem)
-        wave_to_plot(Path(anomaly.sound_file.path), format='png', as_file=anomaly.plot_image.path)
+        wave_to_plot(sound_file_path, format='png', as_file=anomaly.plot_image.path)
         anomaly.save()
         return FileResponse(
             anomaly.plot_image.open('rb'),
